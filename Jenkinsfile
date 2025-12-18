@@ -2,52 +2,56 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven-3' // Make sure 'M3' is configured in Jenkins Global Tool Configuration
-
+        maven 'maven-3'   // Must match Jenkins Global Tool Configuration
     }
 
     environment {
-        PROJECT_KEY = "k8s_Nexus"
-        NEXUS_URL = 'http://65.2.132.157:32000'
-        NEXUS_REPO_SNAPSHOT = 'maven-snapshots'
-        NEXUS_REPO_RELEASE = 'maven-test'
-        PROJECT_VERSION = ''
+        PROJECT_KEY           = "k8s_Nexus"
+        NEXUS_URL             = "http://65.2.132.157:32000"
+        NEXUS_REPO_SNAPSHOT   = "maven-snapshots"
+        NEXUS_REPO_RELEASE    = "maven-test"
+        PROJECT_VERSION       = ""
     }
 
     stages {
-stage('Checkout SCM') {
+
+        stage('Checkout SCM') {
             steps {
-                git branch: 'main', url: 'https://github.com/Amith373/K8s_Nexus.git'
+                git branch: 'main',
+                    url: 'https://github.com/Amith373/K8s_Nexus.git'
             }
         }
 
-stage('Set Project Version') {
+        stage('Set Project Version') {
             steps {
                 script {
-                    // Read version from pom.xml
-                    PROJECT_VERSION = sh(script: "mvnhelp:evaluate -Dexpression=project.version -q -DforceStdout",returnStdout: true).trim()
-                    echo "Project Version: ${PROJECT_VERSION}"
+                    PROJECT_VERSION = sh(
+                        script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "📦 Project Version: ${PROJECT_VERSION}"
                 }
             }
         }
 
-stage('Build & Test') {
+        stage('Build & Test') {
             steps {
-sh "mvn clean verify"
+                sh 'mvn clean verify'
             }
         }
 
-stage('JaCoCo Coverage') {
+        stage('JaCoCo Coverage') {
             steps {
-sh "mvnjacoco:report"
+                sh 'mvn jacoco:report'
             }
         }
 
-stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
-withSonarQubeEnv('sonar-k8s') {
-sh """
-mvnsonar:sonar \
+                withSonarQubeEnv('sonar-k8s') {
+                    sh """
+                        mvn sonar:sonar \
                         -Dsonar.projectKey=${PROJECT_KEY} \
                         -Dsonar.projectName=${PROJECT_KEY}
                     """
@@ -55,38 +59,46 @@ mvnsonar:sonar \
             }
         }
 
-stage('Quality Gate') {
+        stage('Quality Gate') {
             steps {
-timeout(time: 5, unit: 'MINUTES') {
-waitForQualityGateabortPipeline: true
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
 
-stage('Deploy to Nexus') {
+        stage('Deploy to Nexus') {
             steps {
                 script {
                     def isSnapshot = PROJECT_VERSION.endsWith("-SNAPSHOT")
-                    def repoUrl = isSnapshot ? "${NEXUS_URL}/repository/${NEXUS_REPO_SNAPSHOT}/" : "${NEXUS_URL}/repository/${NEXUS_REPO_RELEASE}/"
+                    def repoUrl = isSnapshot ?
+                        "${NEXUS_URL}/repository/${NEXUS_REPO_SNAPSHOT}/" :
+                        "${NEXUS_URL}/repository/${NEXUS_REPO_RELEASE}/"
 
-                    echo "Deploying ${PROJECT_VERSION} to: ${repoUrl}"
+                    echo "🚀 Deploying ${PROJECT_VERSION} to ${repoUrl}"
 
-withCredentials([usernamePassword(credentialsId: 'nexus-creds', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                        // Temporary Maven settings with credentials
-writeFile file: 'temp-settings.xml', text: """
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'nexus-creds',
+                            usernameVariable: 'NEXUS_USER',
+                            passwordVariable: 'NEXUS_PASS'
+                        )
+                    ]) {
+
+                        writeFile file: 'temp-settings.xml', text: """
 <settings>
-<servers>
-<server>
-<id>nexus</id>
-<username>\${env.NEXUS_USER}</username>
-<password>\${env.NEXUS_PASS}</password>
-</server>
-</servers>
+  <servers>
+    <server>
+      <id>nexus</id>
+      <username>${env.NEXUS_USER}</username>
+      <password>${env.NEXUS_PASS}</password>
+    </server>
+  </servers>
 </settings>
-                        """
+"""
 
-sh """
-mvn deploy -s temp-settings.xml \
+                        sh """
+                            mvn deploy -s temp-settings.xml \
                             -DaltDeploymentRepository=nexus::default::${repoUrl}
                         """
                     }
@@ -97,17 +109,20 @@ mvn deploy -s temp-settings.xml \
 
     post {
         success {
-            echo "✅ Pipeline succeeded: Quality Gate passed and artifact deployed to Nexus."
+            echo "✅ Pipeline succeeded: Quality Gate passed & artifact deployed."
         }
+
         failure {
-            echo "❌ Pipeline failed: Check logs for errors."
+            echo "❌ Pipeline failed. Please check the Jenkins logs."
         }
+
         always {
-archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-junit '**/target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+            junit '**/target/surefire-reports/*.xml'
         }
+
         cleanup {
-deleteDir() // Clean workspace after build
+            deleteDir()
         }
     }
 }
