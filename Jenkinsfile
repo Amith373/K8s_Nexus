@@ -49,7 +49,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar-k8s') {
+                withSonarQubeEnv('SonarQube-K8s') {
                     sh """
                         mvn sonar:sonar \
                         -Dsonar.projectKey=${PROJECT_KEY} \
