@@ -116,11 +116,6 @@ pipeline {
             echo "❌ Pipeline failed. Please check the Jenkins logs."
         }
 
-        always {
-            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-            junit '**/target/surefire-reports/*.xml'
-        }
-
         cleanup {
             deleteDir()
         }
