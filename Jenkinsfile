@@ -9,7 +9,7 @@ pipeline {
         PROJECT_KEY           = "java-k8s"
         NEXUS_URL             = "http://13.232.91.33:32000"
         NEXUS_REPO_SNAPSHOT   = "maven-snapshots"
-        NEXUS_REPO_RELEASE    = "maven-test"
+        NEXUS_REPO_RELEASE    = "maven-releases"
         PROJECT_VERSION       = ""
     }
 
