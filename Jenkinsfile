@@ -6,8 +6,8 @@ pipeline {
     }
 
     environment {
-        PROJECT_KEY           = "k8s_Nexus"
-        NEXUS_URL             = "http://65.2.132.157:32000"
+        PROJECT_KEY           = "calender_java"
+        NEXUS_URL             = "http://13.232.91.33:32000"
         NEXUS_REPO_SNAPSHOT   = "maven-snapshots"
         NEXUS_REPO_RELEASE    = "maven-test"
         PROJECT_VERSION       = ""
