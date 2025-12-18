@@ -17,7 +17,7 @@ pipeline {
     stages {
 stage('Checkout SCM') {
             steps {
-                git branch: 'main', url: 'https://github.com/jayanthis952/calculator-java.git'
+                git branch: 'main', url: 'https://github.com/Amith373/K8s_Nexus.git'
             }
         }
 
@@ -25,10 +25,7 @@ stage('Set Project Version') {
             steps {
                 script {
                     // Read version from pom.xml
-                    PROJECT_VERSION = sh(
-                        script: "mvnhelp:evaluate -Dexpression=project.version -q -DforceStdout",
-returnStdout: true
-).trim()
+                    PROJECT_VERSION = sh(script: "mvnhelp:evaluate -Dexpression=project.version -q -DforceStdout",returnStdout: true).trim()
                     echo "Project Version: ${PROJECT_VERSION}"
                 }
             }
