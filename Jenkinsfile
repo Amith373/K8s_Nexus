@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PROJECT_KEY = "demo-project"
-        VERSION     = "1.0-SNAPSHOT"
+        VERSION     = "4.0.0${env.BUILD_NUMBER}"
         IMAGE_NAME  = "demo-project"
     }
 
