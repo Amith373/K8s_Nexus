@@ -68,7 +68,7 @@ pipeline {
 
         stage('Nexus Artifactory Upload') {
             steps {
-                stage('Nexus Artifactory Upload') { steps { nexusArtifactUploader artifacts: [[artifactId: 'my-app', classifier: '', file: 'target/my-app-1.0-SNAPSHOT.jar', type: '.jar']], credentialsId: '66547aac-4104-464f-ac9f-2057b94190a5', groupId: 'com.mycompany.app', nexusUrl: '43.204.217.231:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-release', version: ${VERSION} }
+                stage('Nexus Artifactory Upload') { steps { nexusArtifactUploader artifacts: [[artifactId: 'my-app', classifier: '', file: 'target/my-app-1.0-SNAPSHOT.jar', type: '.jar']], credentialsId: '66547aac-4104-464f-ac9f-2057b94190a5', groupId: 'com.mycompany.app', nexusUrl: '43.204.217.231:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-release', version: 4.0.0 }
             }
         }
     }
