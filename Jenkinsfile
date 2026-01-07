@@ -54,9 +54,7 @@ pipeline {
         }
         stage('Nexus-artifactory'){
             steps{
-                nexusArtifactUploader artifacts: [[artifactId: 'my-app', classifier: '', file: "target/my-app-${VERSION}.jar", type: 'jar']],
-                    credentialsId: 'nexus-cred', groupId: 'com.example', nexusUrl: '16.16.104.141:30003', nexusVersion: 'nexus3', protocol: 
-                    'http', repository: 'maven-releases', version: "${VERSION}"
+                nexusArtifactUploader artifacts: [[artifactId: 'my-app', classifier: '', file: 'target/com.mycompany.app-4.0.0.jar', type: '.jar']], credentialsId: '66547aac-4104-464f-ac9f-2057b94190a5', groupId: 'com.mycompany.app', nexusUrl: '43.204.217.231:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-release', version: "${VERSION}"}"
             }
         }
          }
