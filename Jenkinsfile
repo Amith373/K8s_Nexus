@@ -69,11 +69,11 @@ pipeline {
                     repository: 'maven-release',
                     credentialsId: '66547aac-4104-464f-ac9f-2057b94190a5',
                     groupId: 'com.mycompany.app',
-                    version: 4.0.0,
+                    version: VERSION,
                     artifacts: [[
                         artifactId: 'my-app',
                         classifier: '',
-                        file: "target/my-app-4.0.0.jar",
+                        file: "target/my-app-${VERSION}.jar",
                         type: 'jar'
                     ]]
                 )
