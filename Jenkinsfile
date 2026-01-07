@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PROJECT_KEY = "demo-project"
-        VERSION     = "4.0.0.${env.BUILD_NUMBER}"
+        VERSION     = "1.0-SNAPSHOT.${env.BUILD_NUMBER}"
         IMAGE_NAME  = "demo-project"
     }
 
@@ -62,21 +62,7 @@ pipeline {
 
         stage('Nexus Artifactory Upload') {
             steps {
-                nexusArtifactUploader(
-                    nexusVersion: 'nexus3',
-                    protocol: 'http',
-                    nexusUrl: '43.204.217.231:8081',
-                    repository: 'maven-release',
-                    credentialsId: '66547aac-4104-464f-ac9f-2057b94190a5',
-                    groupId: 'com.mycompany.app',
-                    version: VERSION,
-                    artifacts: [[
-                        artifactId: 'my-app',
-                        classifier: '',
-                        file: "target/my-app-${VERSION}.jar",
-                        type: 'jar'
-                    ]]
-                )
+               nexusArtifactUploader artifacts: [[artifactId: 'my-app', classifier: '', file: 'target/my-app-1.0-SNAPSHOT.pom', type: '.jar']], credentialsId: '62515310-e9a5-4eab-912d-d86919d04164', groupId: 'com.mycompany.app', nexusUrl: '65.2.153.30:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-releases', version: '1.0-SNAPSHOT'
             }
         }
 
