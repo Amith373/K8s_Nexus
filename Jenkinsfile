@@ -60,24 +60,7 @@ pipeline {
             }
         }
 
-        stage('Nexus Artifactory Upload') {
-            steps {
-               nexusArtifactUploader(
-    nexusVersion: 'nexus3',
-    protocol: 'http',
-    nexusUrl: '65.2.153.30:8081',
-    groupId: 'com.mycompany.app',
-    version: '1.0-SNAPSHOT',
-    repository: 'my-app',
-    credentialsId: 'nexus-credentials',
-    artifacts: [[
-        artifactId: 'my-app',
-        classifier: '',
-        file: 'target/my-app-1.0-SNAPSHOT.jar',
-        type: 'jar'
-    ]]
-)
-
+       nexusArtifactUploader artifacts: [[artifactId: 'my-app', classifier: '', file: 'my-app-1.0-SNAPSHOT.jar', type: '.jar']], credentialsId: 'nexus-id-passwd', groupId: 'com.mycompany.app', nexusUrl: '13.233.201.49:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'my-app', version: '1.0-SNAPSHOT'
             }
         }
 
